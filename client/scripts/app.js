@@ -20,10 +20,12 @@ var getMessages = function () {$.ajax({
 
 var parseMessages = function(allMessages){
   _.each(allMessages.results, function(msg){
-    var output = '<li>' + msg.username + ': ' + msg.text + '@' + msg.createdAt + '</li>';
-    $('.messages').prepend(html_sanitize(output));
-    while ($('.messages').children().length >20) {
-      $('.messages').children().last().remove();
+    if(!/alert/.test(msg.text) && !/\<img/.test(msg.text)){
+      var output = '<li>' + msg.username + ': ' + msg.text + '@' + msg.createdAt + '</li>';
+      $('.messages').prepend(output);
+      while ($('.messages').children().length >20) {
+        $('.messages').children().last().remove();
+      }
     }
   });
 };
@@ -31,11 +33,3 @@ var parseMessages = function(allMessages){
 setInterval(getMessages, 1000);
 
 
-// var escape = function(s) {
-//   return s.split('#').map(function(v) {
-//       // Only 20% of slashes are end tags; save 1.2% of total
-//       // bytes by only escaping those.
-//       var json = JSON.stringify(v).replace(/<\//g, '<\\/');
-//       return json;
-//       }).join('');
-// }
