@@ -18,8 +18,13 @@
   <body>
     <div id="main">
       <h1>chatterbox</h1>
-      <input type="text" placeholder="Say something!" autofocus/>
-      <input type="submit"/>
+      <input type="text" class="send" placeholder="Say something!" autofocus/>
+      <input type="submit" class="send"/>
+        <select name="rooms" class="rooms">
+          <option class="lobby">lobby</option>
+        </select>
+        <input type="text" class="createRoom" placeholder="Make your own chat room"/>
+        <input type="submit" class="createRoom"/>
         <!-- input form -->
         <ul class="messages">
         </ul>
