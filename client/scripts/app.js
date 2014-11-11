@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-var currentRoom = 'lobby';
+var friendsList = [];
 var postsDisplayed = 50;
 
 var postMessage = function (message) {
@@ -28,6 +28,7 @@ var getMessages = function () {
     contentType: 'application/json',
     success: function (data) {
       parseMessages(data,room);
+      clickFriends();
     },
     error: function (data) {
       // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -44,7 +45,10 @@ var parseMessages = function(allMessages, room){
     var msg = allMessages.results[i];
     if (isClean(msg)) {
       if (msg.roomname === room) {
-        var output = '<li>' + msg.username + ': ' + msg.text + ' @' + msg.createdAt + ' in ' + msg.roomname + '</li>';
+        var output = '<li class ="chat"><a class="username">'+msg.username+'</a>: ' + msg.text + ' @' + msg.createdAt + ' in ' + msg.roomname + '</li>';
+        if(friendsList.indexOf(msg.username) !== -1){
+          output = '<b>' + output + '</b>';
+        }
         $('.messages').prepend(output);
         while ($('.messages').children().length > postsDisplayed) {
           $('.messages').children().last().remove();
@@ -74,6 +78,15 @@ var parseMessages = function(allMessages, room){
     $('input[type=text].createRoom').val('');
 
   });
+
+  var clickFriends = function () {$('.username').on('click', function () {
+      var addFriend = confirm("Add friend?");
+      if (addFriend) {
+        friendsList.push($(this).text());
+        console.log(friendsList);
+      }
+    })
+  }
 
 
 
