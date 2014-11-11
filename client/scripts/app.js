@@ -1,6 +1,7 @@
 $(document).ready(function(){
 
 var currentRoom = 'lobby';
+var postsDisplayed = 50;
 
 var postMessage = function (message) {
   $.ajax({
@@ -19,13 +20,14 @@ var postMessage = function (message) {
 };
 
 var getMessages = function () {
+  var room = $('.rooms').find(':selected').val();
   $.ajax({
     url: 'https://api.parse.com/1/classes/chatterbox',
     type: 'GET',
     data: 'order=-createdAt',
     contentType: 'application/json',
     success: function (data) {
-      parseMessages(data);
+      parseMessages(data,room);
     },
     error: function (data) {
       // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -35,14 +37,18 @@ var getMessages = function () {
 };
 
 
-var parseMessages = function(allMessages){
+var parseMessages = function(allMessages, room){
+  room = room || 'lobby';
+  $('.messages').children().remove();
   for (var i = allMessages.results.length -1; i>= 0; i--){
     var msg = allMessages.results[i];
     if (isClean(msg)) {
-      var output = '<li>' + msg.username + ': ' + msg.text + ' @' + msg.createdAt + ' in ' + msg.roomname + '</li>';
-      $('.messages').prepend(output);
-      while ($('.messages').children().length > 50) {
-        $('.messages').children().last().remove();
+      if (msg.roomname === room) {
+        var output = '<li>' + msg.username + ': ' + msg.text + ' @' + msg.createdAt + ' in ' + msg.roomname + '</li>';
+        $('.messages').prepend(output);
+        while ($('.messages').children().length > postsDisplayed) {
+          $('.messages').children().last().remove();
+        }
       }
     }
   };
@@ -52,7 +58,7 @@ var parseMessages = function(allMessages){
   $('input[type=submit].send').on('click',function(){
     var message = {};
     message.text = $('input[type=text].send').val();
-    message.roomname = 'lobby';
+    message.roomname = $('.rooms').find(':selected').val();
     message.username = window.location.search.slice(10);
     postMessage(message);
     $('input[type=text].send').val('');
