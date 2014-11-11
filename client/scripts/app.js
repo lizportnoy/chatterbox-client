@@ -36,7 +36,7 @@ var getMessages = function () {
 var parseMessages = function(allMessages){
   for (var i = allMessages.results.length -1; i>= 0; i--){
     var msg = allMessages.results[i];
-    if(!/alert/.test(msg.text) && !/\<img/.test(msg.text)){
+    if (isClean(msg)) {
       var output = '<li>' + msg.username + ': ' + msg.text + '@' + msg.createdAt + '</li>';
       $('.messages').prepend(output);
       while ($('.messages').children().length > 50) {
@@ -47,14 +47,6 @@ var parseMessages = function(allMessages){
 };
 
 
-
-// var message = {
-//   'username': 'shawndrost',
-//   'text': 'trololo',
-//   'roomname': '4chan'
-// };
-
-
   $('input[type=submit]').on('click',function(){
     var message = {};
     message.text = $('input[type=text]').val();
@@ -62,6 +54,11 @@ var parseMessages = function(allMessages){
     message.username = window.location.search.slice(10);
     postMessage(message);
   });
+
+  var isClean = function (obj) {
+    var msg = JSON.stringify(obj)
+    return !/alert/.test(msg) && !/\<img/.test(msg) && !/\<script/.test(msg);
+  }
 
   setInterval(getMessages, 1000);
 
